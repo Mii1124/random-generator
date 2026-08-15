@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>魔導機関の設計図 〜キャラデザ錬成盤〜</title>
+    <style>
+        :root {
+            /* 魔導スチームパンクのカラー設定 */
+            --bg-base: #120d0a;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #2b1f1a 0%, #120d0a 100%);
+            --container-bg: rgba(33, 24, 20, 0.95);
+            --card-bg: rgba(20, 15, 12, 0.8);
+            --text-main: #e6d5b8; /* 古い羊皮紙のような色 */
+            --text-sub: #a6967c;
+            --brass-light: #d4af37; /* 真鍮の輝き */
+            --brass-dark: #8c6d23;
+            --copper: #b85d33; /* 銅色 */
+            --magic-glow: #00ffcc; /* 魔力のシアン発光 */
+            --magic-glow-dim: rgba(0, 255, 204, 0.15);
+            --border-color: #4a382c;
+        }
+
+        body {
+            font-family: "YuMincho", "Hiragino Mincho ProN", "Georgia", serif;
+            background: var(--bg-gradient);
+            background-color: var(--bg-base);
+            background-attachment: fixed;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            /* 背景にうっすらと魔法陣や歯車の名残を感じさせる模様 */
+            background-image: 
+                radial-gradient(circle at center, transparent 30%, rgba(0, 255, 204, 0.02) 70%),
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.2) 10px, rgba(0,0,0,0.2) 20px);
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            width: 100%;
+            max-width: 500px;
+            padding: 35px 25px;
+            border-radius: 4px;
+            border: 2px solid var(--brass-dark);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.8),
+                inset 0 0 20px rgba(0, 0, 0, 0.9),
+                0 0 15px var(--magic-glow-dim);
+            position: relative;
+        }
+
+        /* 枠の四隅のビス（留め金）装飾 */
+        .container::before, .container::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+        .container::before {
+            border: 1px solid var(--copper);
+            top: 6px; bottom: 6px; left: 6px; right: 6px;
+            width: auto; height: auto;
+            opacity: 0.5;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--brass-light);
+            letter-spacing: 0.1em;
+            margin-bottom: 5px;
+            font-weight: normal;
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+            line-height: 1.4;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--copper);
+            letter-spacing: 0.2em;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .settings {
+            background: var(--card-bg);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label {
+            font-size: 0.9rem;
+            color: var(--brass-light);
+            margin-bottom: 10px;
+            display: block;
+            letter-spacing: 0.1em;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+            font-size: 0.95rem;
+            background-color: #0a0806;
+            color: var(--text-main);
+            outline: none;
+            font-family: "YuMincho", serif;
+            transition: all 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--magic-glow);
+            box-shadow: 0 0 10px var(--magic-glow-dim);
+            color: var(--magic-glow);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .radio-group input[type="radio"] {
+            accent-color: var(--copper);
+        }
+
+        .btn-generate {
+            display: block;
+            width: 100%;
+            background: linear-gradient(180deg, #2b1f1a 0%, #120d0a 100%);
+            color: var(--brass-light);
+            border: 1px solid var(--brass-dark);
+            padding: 18px 0;
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            margin-bottom: 25px;
+            font-family: "YuMincho", "Georgia", serif;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-generate::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn-generate:hover {
+            border-color: var(--magic-glow);
+            color: var(--magic-glow);
+            box-shadow: 0 0 20px var(--magic-glow-dim), inset 0 0 10px var(--magic-glow-dim);
+            text-shadow: 0 0 8px var(--magic-glow);
+        }
+        .btn-generate:hover::before {
+            left: 200%;
+        }
+
+        .result-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            min-height: 150px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            padding: 40px 0;
+        }
+
+        .result-item {
+            border-bottom: 1px solid rgba(184, 93, 51, 0.2); /* 銅色の細い線 */
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .item-label {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-label input[type="checkbox"] {
+            accent-color: var(--brass-dark);
+        }
+
+        .btn-reroll {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "YuMincho", serif;
+        }
+
+        .btn-reroll:hover {
+            border-color: var(--magic-glow);
+            color: var(--magic-glow);
+            background: var(--magic-glow-dim);
+        }
+
+        .item-value {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            text-align: right;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .color-palette-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .color-box {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            transform: rotate(45deg); /* ダイヤ型にして魔法っぽさを演出 */
+            margin: 0 4px;
+        }
+
+        .btn-copy {
+            display: block;
+            width: 100%;
+            background-color: transparent;
+            color: var(--brass-light);
+            border: 1px dashed var(--brass-dark);
+            padding: 14px 0;
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "YuMincho", serif;
+        }
+
+        .btn-copy:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-style: solid;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>魔導機関の設計図</h1>
+    <div class="subtitle">〜 キャラデザ錬成盤 〜</div>
+    <p class="description">
+        画材・術式・各種要素を機関に組み込み、<br>
+        キャラクターの原案を抽出・錬成します。
+    </p>
+
+    <div class="settings">
+        <div class="settings-group">
+            <span class="settings-label">触媒（画材）</span>
+            <select id="artSupply">
+                <option value="3色ボールペン（黒・赤・青）">3色ボールペン（黒・赤・青）</option>
+                <option value="黒のシャーペン">黒のシャーペン</option>
+                <option value="アイビスペイント">アイビスペイント</option>
+            </select>
+        </div>
+        <div class="settings-group">
+            <span class="settings-label">錬成対象（カテゴリ）</span>
+            <div class="radio-group">
+                <label><input type="radio" name="category" value="person" checked> 人型</label>
+                <label><input type="radio" name="category" value="motif"> 魔導具（モチーフ）</label>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-generate" onclick="generate()">機関起動（錬成する）</button>
+
+    <div class="result-container" id="resultContainer">
+        <div class="empty-state">未稼働：術式を展開してください</div>
+    </div>
+
+    <button class="btn-copy" onclick="copyResult()">抽出結果を記録（コピー）</button>
+</div>
+
+<script>
+// --- データリスト（中身はそのまま） ---
+const data = {
+    atmosphere: ["ファンタジー（王道・剣と魔法）","スチームパンク（蒸気機関と歯車）","近未来（SF・サイバーパンク）","星空・天体・宇宙","魔法・魔導（学園・古書）","メルヘン（童話・お菓子）","深海・水没都市","鉱物・結晶・ガラス","廃墟・レトロフューチャー","天空・雲上の王国","ゴシック・ダークファンタジー","錬金術・薬草学（アトリエ）","和風ファンタジー（怪異・あやかし）","夢幻・ノスタルジー（白昼夢）","時計塔・時間の旅人"],
+    gender: ["男性", "女性", "中性"],
+    personality: ["常に穏やかで微笑みを絶やさない","観察力が高く冷静沈着","警戒心が強く初対面には冷たい","好奇心旺盛で危険を顧みない","極度の人見知りで照れ屋","自信家でプライドが高い","いつも眠そうでマイペース","責任感が強く真面目すぎる","皮肉屋で口が悪い","感情の起伏が激しく喜怒哀楽が豊か","礼儀正しくどこか浮世離れしている","お喋りでムードメーカー","物静かで無口、言葉より行動派","破天荒で予測不能な行動が多い","面倒見が良く兄・姉御肌","悲観的で何かと諦めがち","楽観主義者で「なんとかなる」が口癖","執念深く一度決めたら曲げない","おっとりしているが芯が強い","計算高く損得勘定で動く","臆病で常に周囲を気にしている","慈悲深く誰にでも優しい","冷徹で目的のためには手段を選ばない","天真爛漫で純粋無垢","ひねくれ者で素直になれない","悟りを開いたような達観した雰囲気","負けず嫌いで努力家","自由奔放で束縛を嫌う","正義感が強く曲がったことが大嫌い","ちょっとドジで抜け目がある","神秘的で本心が読めない","現実主義で夢物語を信じない","ロマンチストで空想好き","寂しがり屋でかまってちゃん","寡黙だが内面は情熱的","いつも不安げで頼りなさそう","高飛車で少し我儘","淡々としていて無感情","世話好きで過保護になりがち","怪しげで怪奇的なものを愛する","お人好しで騙されやすい","意志が固く頑固","掴みどころがなくのらりくらりとしている","完璧主義で妥協を許さない","社交的だがどこか一線を画している","慎重派で石橋を叩いて渡る","大雑把で細かいことは気にしない","好戦的で強い相手と戦うのが好き","献身的で自分を後回しにしがち","皮肉交じりに優しさをみせる天の邪鬼","ナルシストで美しいものが好き","いつも飢えていて食いしん坊","嘘つきで息を吐くように騙す","疑り深く誰も信じない","誰に対しても敬語で慇懃無礼","超絶ポジティブで失敗を恐れない","常にダルそうで無気力","すぐに泣いてしまう涙もろい性格","嫉妬深く独占欲が強い","面白ければ何でもいい享楽主義","徹底した合理主義者","情に厚く涙もろい熱血漢","常に敬意を払う騎士道精神","自己犠牲を厭わない狂信者","何を考えているか分からないサイコパス","ひどい方向音痴で天然","お金にがめつい守銭奴","常に最悪の事態を想定する心配性","世話を焼かれるのが好きな甘えん坊","一見チャラいが実は一途"],
+    bangsMale: ["センターパート","重めマッシュバング","シースルーバング","かき上げ前髪","七三分け","アシンメトリー前髪","パッツン前髪","両目隠れ","片目隠れ","アップバング（立ち上げ）","M字バング","ギザギザ前髪","オン眉（短め前髪）","フェイスラインに沿う触角バング","スパイキーバング（ツンツン）","カーリーバング（パーマ）","センター分け（根元立ち上げ）","分け目なし（全下ろし）","オールバック風前髪","編み込み前髪"],
+    bangsFemale: ["ぱっつん前髪","シースルーバング","センター分け","斜め分け（流し前髪）","オン眉（短め前髪）","チョッピーバング（不揃い短め）","かき上げ前髪","姫カット風フェイスレイヤー","触角あり前髪","うざバング（目にかかる長さ）","片目隠れ","両目隠れ","アシンメトリー前髪","センター分け（外ハネ）","ベビーバング（ふんわりオン眉）","M字バング","くるんとしたカール前髪","編み込み前髪","ワイドバング（こめかみまで切り揃え）","前髪なし（オールバック）"],
+    hairMale: ["ベリーショート","マッシュヘア","ツーブロック","センターパート（センター分け）","ネオ七三分け","ウルフカット","スリックバック（オールバック）","ショートボブ","ゆるふわパーマ","スパイキーショート（ツンツン髪）","アシンメトリーショート","坊主・スパートショート","ニュアンスパーマ","クロップスタイル","レイヤーショート","ナチュラルストレートショート","アッシュカール","サイドパート","パッツン前髪ショート","片目隠れショート","メッシュ入りショート","アップバング（立ち上げ前髪）","ハンサムショート","ミディアムボブ","外ハネミディアム","ミディアムウルフ","ゆるめウルフパーマ","結べる長さのミディアム","ハーフアップ（ショート〜ミディアム）","サイド編み込みミディアム","ハーフアップお団子","肩下ストレートミディアム","センター分けミディアムウェーブ","束感ウェーブミディアム","片耳かけミディアム","ポニーテール（ひとつ結び）","ローポニーテール（低め結び）","サイドポニーテール","ドレッドヘア","編み込み三つ編み（一本結び）","ストレートロング","ウェーブロング","ハイポニーテール","ツインテール（ロング）","三つ編みロング","シニヨン（お団子ヘア）","アシンメトリーロング","姫カット風ロング","前髪なしストレートロング","超ロング（腰下・三つ編みアレンジ）"],
+    hairFemale: ["ベリーショート","ピクシーカット","ショートボブ","前下がりボブ","マッシュボブ","切りっぱなしボブ","パッツン前髪ボブ","外ハネショートボブ","アシンメトリーショート","ハンサムショート","ゆるふわショートパーマ","ウルフカット（ショート）","片目隠れボブ","インナーカラーボブ","くびれショート","ミディアムストレート","ロブ（ロングボブ）","くびれミディアム","外ハネミディアム","ゆるふわミディアムウェーブ","ミディアムウルフ","ウルフボブ","ポニーテール（高め）","ローポニーテール（低め）","サイドポニーテール","ハーフアップ（ストレート）","ハーフアップ（ウェーブ）","ハーフアップお団子","お団子ヘア（トップ結び）","お団子ヘア（低めルーズ）","ツインテール（高め）","ツインテール（低め・ゆるめ）","縦ロールツイン","編み込みカチューシャ風アレンジ","三つ編み（一本）","三つ編み（おさげ・二本）","サイド編み込み","フィッシュボーン","ストレートロング","姫カットストレートロング","ロングウェーブ","ソバージュロング","スーパーロング（腰下）","パッツンロングストレート","前髪分けウェーブロング","シニヨン（和風・クラシカル）","フィッシュボーンツイン","ダブルお団子（チャイナ風）","ギブソンタック（クラシカルまとめ髪）","左右非対称（片側ロング×片側ショート）"],
+    eyes: ["真紅","緋色","ローズピンク","桜色","ボルドー","サンゴ色","牡丹色","ルビー","チェリーレッド","茜色","空色","瑠璃色","コバルトブルー","アイスブルー","ネイビー","藍色","ターコイズ","アクアマリン","浅葱色","セルリアンブルー","エメラルド","翡翠色","モスグリーン","ライムグリーン","オリーブ","浅緑","ミントグリーン","フォレストグリーン","ビリジアン","ペリドット","金色","琥珀色（アンバー）","レモンイエロー","ハチミツ色","橙色","アプリコット","マスタード","マリーゴールド","トパーズ","シャンパンゴールド","こげ茶","ヘーゼル","アメジスト","藤色","ラベンダー","漆黒","シルバーグレー","灰色","オッドアイ（青×金）","オッドアイ（赤×緑）","ハート型（ピンク）","星型（黄色）","歯車型（銅色）","ダイヤ型（水色）","スリット/蛇の目（黄色）","猫目（緑）","爬虫類（赤）","十字架型（金）","蝶のシルエット（紫）","鍵穴型（黒）","三日月型（銀）","太陽型（オレンジ）","渦巻き/ぐるぐる目（紫）","ターゲットマーク/照準器（赤）","花の形（ピンク）","葉っぱ型（緑）","雪の結晶型（水色）","時計の針型（白）","羅針盤型（金）","デジタル模様/基盤（ネオングリーン）","ハイライトなし（漆黒）","ハイライトなし（深紅）","瞳孔がない/盲目風（白眼）","瞳孔が2つある（紫）","白い瞳孔/反転目（黒背景に白）","燃える炎の形（赤橙）","水滴・波紋型（青）","幾何学模様型（シアン）","魔法陣型（マゼンタ）","ひび割れ型（グレー）","鎖型（銀）","髑髏のシルエット（黒）","蜘蛛の巣型（紫）","王冠型（金）","宝石のカッティング風（虹色）","無数の星屑（濃紺）","ブラックホール風（渦巻く黒）","鳥のシルエット（青）","音符型（ピンク）","稲妻型（黄）","万華鏡風（多色）","ステンドグラス風（赤青緑）","メカニカルなレンズ眼（赤発光）","猫のシルエット（黄）","月食・日食型（黒×金）","溶け出すような瞳（赤紫）","結晶・鉱石風（エメラルド）","宇宙・銀河柄（濃紺×星）","ドット絵風（ネオンカラー）","トランプのマーク/スペード等（黒・赤）"],
+    expression: ["満面の笑み","照れ笑い","ニヤリと笑う","楽しそうな大笑い","穏やかな微笑み","悪戯っぽい笑み","誇らしげな笑顔","泣き笑い","狂気的な笑み","ふにゃっとした笑顔","激怒（声を荒げる）","静かな怒り（睨みつけ）","舌打ちしそうな不機嫌","眉間にしわを寄せる","頬を膨らませて怒る（ぷくー）","軽蔑したような怒り","殺意を感じる冷たい視線","苛立ち（歯を食いしばる）","理不尽に対する怒り","嫉妬に狂った怒り","ポロポロと静かに泣く","号泣","悲しげに伏し目がち","絶望したような空虚な顔","涙をこらえる顔","寂しそうな顔","懺悔するような顔","切なそうな顔","すんすん（鼻をすする）","諦めの混じった悲哀","目を見開いて驚く","恐怖で顔が引きつる","怯えてすくむ","ハッとする（気づき）","信じられないものを見る目","唖然とする","ビクッとする（驚き）","青ざめる","冷や汗をかく","パニック状態","困り顔（八の字眉）","呆れ顔（やれやれ）","恥ずかしさで真っ赤","ドギマギする","目を泳がせる","ため息をつく顔","複雑な表情","痛みに耐える顔","焦り（冷や汗）","どうしていいかわからない顔","無表情（ジト目）","無表情（虚無）","眠そう（あくび）","ドヤ顔","ウインク","企み顔（悪だくみ）","挑発的な顔","色気のある流し目","舌を出してテヘペロ","キョトンとした顔","トランス状態（うっとり）","恍惚とした顔","真剣な顔（キリッ）","遠くを見つめる顔","放心状態","狂気（焦点が合っていない）","ほろ酔いの顔","照れ隠しのツンデレ顔","威嚇するような顔","何かを悟ったような顔"],
+    pose: ["正面で直立","腕を組む","腰に手を当てる","頬杖をつく","頭の後ろで手を組む","髪をかき上げる","あごに手を当てる（思案）","両手で顔を覆う","手を振る","指差す","胸に手を当てる","両手を広げる（歓迎）","手のひらを前に出す（制止）","ピースサイン","敬礼","ガッツポーズ","指を鳴らす","口元を隠す（秘密）","ネクタイ/襟元を直す","手を差し伸べる","両手を組んで祈る","背伸びをする","手を合わせて謝る・お願い","耳を澄ませる","眼鏡を押し上げる","腕を伸ばしてストレッチ","肩をすくめる","手をポケットに突っ込む","武器・アイテムを構える","両手で何かを包み込む","振り返る","上を見上げる","うつむく","首を傾げる","胸倉を掴む（または掴まれる）","投げキッス","指を唇に当てる（シーッ）","頭を抱える","手を顎に乗せて見下ろす","頬を指差す","帽子を押さえる","両手で顔を挟む","肩に何かを担ぐ","ナイフ・指を舐める","手を首元に添える","腕を前に突き出す","銃のポーズ（指鉄砲）","ネイル・手の甲を見せる","ジャケットを羽織る・脱ぐ","試験管を持って実験している","気を付け（直立）","休めの姿勢（片足重心）","歩く","走る","ジャンプする","しゃがむ（ヤンキー座り）","体育座り","正座","あぐら","横座り（お姉さん座り）","膝立ち","椅子に浅く座る","椅子に深く座る（ふんぞり返る）","椅子に座って足を組む","床に寝転がる（仰向け）","床に寝転がる（うつ伏せ）","壁に背中をもたれかかる","壁に手をつく（壁ドン）","振り返り美人（見返り）","武器を構える（剣道風）","武器を構える（銃風）","両手を広げて空を仰ぐ","片足立ち（フラミンゴ）","階段に座る","膝を抱えて座る","スキップ","空中を浮遊している","四つん這い","後ろ手に手を組んで立つ","前屈みの姿勢","つま先立ち","伸びをする（全身）","ポールなどによりかかる","落下している","地面から立ち上がろうとする","ダンスのポーズ（ワルツ風）","ダンスのポーズ（ヒップホップ風）","膝をついて崩れ落ちる","片膝をついて騎士の礼","お辞儀をする","大の字で寝る","体を丸めて寝る（胎児のポーズ）","ハイキック","回し蹴りの途中","荷物（鞄など）を持って立つ","乗り物に跨るポーズ","傘をさして立つ","空に向かって手を伸ばす","見えない相手と手をつなぐ","後ろ姿（背中を向ける）"],
+    motif: ["浮遊する結晶体","錆びついた大きな歯車","ネオンチューブの指輪","満開のクラゲ","羊骨（スカル）","六角形のガラス製砂時計","天体儀（アストロラーベ）","つぎはぎのぬいぐるみ","金箔の施された古い魔導書","液体が満たされたフラスコ","鍵（アンティーク・電子鍵）","壊れた懐中時計","浮遊する鳥籠","蓮の花と露","トランプのカード","幾何学模様の鏡","封蝋された手紙","青い炎を宿した燭台","毒々しいキノコ","ゼンマイ式のオルゴール","万華鏡","発光する蔦","カセットテープ","巨大なハサミ","水滴が止まった瞬間","パズルピース","幾何学的な立方体","四角柱・角錐の立体","絡み合う鎖","蝶の翅","蜘蛛の巣と水滴","レトロな真空管","ホログラムのチェス駒","機械仕掛けの羽","雫型のペンダント","金魚鉢とタペストリー","歪んだ日時計","羅針盤（コンパス）","包帯の巻かれた剣","幾何学模様の魔法陣","リボンと薔薇の棘","ガラスのりんご","アイシングクッキーの鍵穴","歪んだ短剣","天球の模型","ドーム型ガラスケース","骨の扇子","浮遊する目玉","鉱石が群生した角","シアン色の基板","割れた仮面","天使の片翼","悪魔の尻尾","錆びた錨（アンカー）","幾重にも重なる環（リング）","クラゲの傘","お菓子の家の一片","レースの日傘","注射器と怪しい薬液","機械の背骨","ティーカップと浮かぶ月","アロマランプと紫煙","額縁（中身は星空）","タロットカード","スノードーム","帯電したコンデンサ","幾何学状のバリア","ペンデュラム（振り子）","壊れたラジオ","浮かぶ大きな金貨","古びた鳥の羽根（クイル）","浮遊するランタン","絡み合う赤い糸","眼球が入った試験管","幾何学模様のステンドグラス","ホログラムの蝶","溶けかけたキャンドル","透明なトランプ","レース編みの眼帯","星屑が詰まった小瓶","蔦が絡まったマイク","割れたレコード盤","巨大な万年筆","光るキノコの群生","メカニカルな心臓","古代文字が浮かぶ石版","羽の生えた靴","スチームパンク風ガスマスク","呪符（お札）の束","リボンで巻かれた手錠","水晶球とタッセル","ガラスの靴","ネオンサインの矢印","血の滴る王冠","トゲのある鉄線（有刺鉄線）","歯車のついた鍵","星が落ちる砂時計","鳥籠の中の心臓","デジタルノイズがかかった花","鎖で繋がれた月"],
+    material: ["黄金（ゴールド）","錆びた鉄・赤錆","銀・プラチナ","真鍮（ブラス）・アンティーク調の金属","大理石","黒曜石（オブシディアン）","クリスタル・透明な水晶","透明なガラス","ステンドグラス","氷・霜","水・液体","泥・ヘドロ","溶岩・マグマ","琥珀（アンバー）","蜜・シロップ","血液","スライム・ゼリー状","木材（木目）","竹・藤（編み込まれている）","枯れ木・炭","葉っぱ・植物","幾重にも重なった花びら","ベルベット生地","レース・チュール素材","皮革（レザー）","シルク（絹）","毛糸・ニット","骨・象牙","肉・内臓系（生々しい質感）","鱗・爬虫類の皮","ふわふわの羽毛","雲・霧","煙・ガス状","光・レーザー（実体がない）","星空・宇宙空間（中が宇宙になっている）","ホログラム・電子ノイズ","ネオン管","チョコレート","クッキー・ビスケット","キャンディ・飴","マシュマロ・わたあめ","陶器・磁器（ツヤツヤしている）","ザラザラした砂・砂礫","和紙・羊皮紙","蝋（キャンドルワックス）","全面が鏡・ミラー","発泡スチロール","真珠・パール","貝殻（オーロラのような光沢）","ブラックホール（光を吸い込む漆黒）"],
+    condition: ["新品・ピカピカで傷一つない","綺麗に磨き上げられている","使い込まれて独特の艶が出ている","経年劣化で色が褪せている","ボロボロに風化している","全体が錆に覆われている","苔むしている","分厚い埃をかぶっている","一部が欠けている・破れている","粉々に砕け散る寸前","蜘蛛の巣が張っている","鋭利な刃物でスパッと切られている","弾痕や打撃によるへこみがある","ドロドロに溶けかかっている","黒く焼け焦げている","ひび割れが無数に入っている","バラバラに解体されている","ツギハギ・テープ・接着剤で無理やり直されている","高熱でぐにゃりと捻じ曲がっている","水を吸ってふやけている","虫食い穴だらけになっている","淡く発光している","まばゆい光を放っている","チカチカと明滅している","黒いモヤ（瘴気）をまとっている","バチバチと帯電している","青い炎上して燃え盛っている","カチコチに凍りついている","空中にふわりと浮遊している","重力を無視して逆さまに存在している","蔦や花がびっしり巻き付いている","大樹の根に取り込まれている","キノコが群生している","常に水滴が滴り落ちている","別の鉱物・結晶に侵食されている","砂に半ば埋もれている","水の底に沈んでいる","泥まみれになっている","雪がこんもり積もっている","内側から鋭い結晶が突き破っている","お札や鎖で厳重に封印されている","誰かの血がべっとり付着している","全く別の物体と融合している","外装が外れ、内部の機械・構造がむき出し","まるで生きているかのようにドクドク脈打つ","映像がバグったようなデジタルノイズが発生している","実体がなく、影だけが存在している","周囲の景色を歪めて反射している","完全に透明になりかけて（消えかけて）いる","無重力空間のようにパーツが分解して浮いている"],
+    scale: ["顕微鏡レベル（細胞・微生物サイズ）","砂粒・米粒ほどの極小サイズ","指先に乗るサイズ","手のひらにすっぽり収まるサイズ","ポケットに入るサイズ","本・スマホくらいのサイズ","両手で大事に抱えるサイズ","足元に転がるサイズ","猫や小型犬くらいのサイズ","人間の子供くらいのサイズ","成人人間とほぼ同じサイズ","人間の倍のサイズ","部屋の天井につかえるサイズ","見上げるほどのサイズ（約5メートル）","家屋・ビル一階建てのサイズ","高層マンションほどの巨大サイズ","巨大な塔・タワーほどのそびえ立つサイズ","山と見紛うほどのサイズ","街全体をすっぽり覆い尽くすサイズ","島や大陸レベルの超巨大サイズ","惑星を抱え込むほどの宇宙サイズ","実寸大（本来の大きさそのまま）","人が乗れる・乗り込めるサイズ","人が身につけられるサイズ（アクセサリー化）","巨人が使う道具のサイズ","小さな妖精が使う道具のサイズ","箱庭・ジオラマに収まるサイズ","水槽の中に収まるサイズ","額縁の中に収まるサイズ","カプセルトイのケースに収まるサイズ","虫眼鏡を通して見るサイズ","鍵穴から覗き見るサイズ","無数に群生している（大小様々）","巨大なメインが一つと、極小のサブが無数のセット","空間に一定の間隔で浮遊している","螺旋状に連なって巨大な塊になっている","マトリョーシカのように入れ子構造になっている","細かく砕け、無数の破片として散らばっている","モチーフ自体は小さいが、巨大な影を落としている","小さなものが無数に集まって、巨大な一つの形を成している","パースが極端についている（手前が巨大、奥が極小）","背景と同化するほど巨大（風景の一部になっている）","魚眼レンズで見たように中央が膨張したサイズ感","極端に細長い（引き伸ばされたようなサイズ）","極端に平べったい（押し潰されたようなサイズ）","圧縮されて密度が異常に高い極小サイズ","重ね合わせられて厚みだけが巨大化したサイズ","触れると巨大化（または縮小）しそうな不安定なサイズ感","遠近感が狂う（遠くにあるはずなのに巨大に見える）","キャンバス（画面の枠）に収まりきらずはみ出している"],
+    palette: [
+        {name: "星屑のまどろみ", colors: ["#111B3D", "#2B4C7E", "#F2D06B", "#E2E8F0"]}, {name: "錆びた蒸気", colors: ["#8B4513", "#5C4033", "#A52A2A", "#556B2F"]}, {name: "ネオンの鼓動", colors: ["#121212", "#00FFFF", "#FF00FF", "#CCFF00"]}, {name: "魔法図書館の午後", colors: ["#800020", "#B8860B", "#F0E6D2", "#013220"]}, {name: "メルヘン・キャンディ", colors: ["#FFD1DC", "#AEC6CF", "#FDFD96", "#FFFFFF"]}, {name: "深海の沈黙", colors: ["#002D62", "#000080", "#39FF14", "#E2DFD2"]}, {name: "鉱石の閃光", colors: ["#9966CC", "#70543E", "#E5E4E2", "#F8F8FF"]}, {name: "廃墟に咲く花", colors: ["#808080", "#708090", "#FF2400", "#8FBC8F"]}, {name: "雲上の暁", colors: ["#FFDAB9", "#C8A2C8", "#87CEEB", "#FFFFFF"]}, {name: "ゴシックの黄昏", colors: ["#1A1A1A", "#8B0000", "#36454F", "#C0C0C0"]},
+        {name: "魔女の薬草園", colors: ["#228B22", "#808000", "#FFDB58", "#4B0082"]}, {name: "あやかしの宵", colors: ["#0F0F0F", "#E60012", "#C68526", "#998DA0"]}, {name: "白昼夢の回廊", colors: ["#FFFFF0", "#F5F5DC", "#F5C6CB", "#B0C4DE"]}, {name: "時計仕掛けの夢", colors: ["#704214", "#B5A642", "#D2691E", "#F5DEB3"]}, {name: "サイバーネオン・レイン", colors: ["#2F4F4F", "#0033FF", "#39FF14", "#FF69B4"]}, {name: "毒りんごの誘惑", colors: ["#E32636", "#004B23", "#0A0A0A", "#9ACD32"]}, {name: "月夜のガラス", colors: ["#A5F2F3", "#F0FFFF", "#C0C0C0", "#00008B"]}, {name: "砂漠の古代都市", colors: ["#F4A460", "#E2725B", "#40E0D0", "#FFBF00"]}, {name: "宇宙の果て", colors: ["#0B0B0B", "#8A2BE2", "#FF00FF", "#F8F8FF"]}, {name: "おかしなお茶会", colors: ["#93C572", "#FF1493", "#7B3F00", "#FFFDD0"]},
+        {name: "退廃のサーカス", colors: ["#8B3A3A", "#CFB53B", "#191919", "#FAF0E6"]}, {name: "真夏の白夜", colors: ["#98FF98", "#FFD1DC", "#DFFF00", "#F8F8FF"]}, {name: "錬金術師の錬成陣", colors: ["#0047AB", "#B5A642", "#E34234", "#2E2E2E"]}, {name: "氷結の王国", colors: ["#E0F7FA", "#00FFFF", "#778899", "#E6E6FA"]}, {name: "夕暮れの街角", colors: ["#E2725B", "#967BB6", "#000080", "#A9A9A9"]}, {name: "電脳神殿", colors: ["#FFFFFF", "#FFD700", "#E0FFFF", "#D3D3D3"]}, {name: "古書の香気", colors: ["#5C4033", "#C19A6B", "#E8D3A2", "#FFFFF0"]}, {name: "夢の国の迷子", colors: ["#E6E6FA", "#B0E0E6", "#F4C2C2", "#FFFFFF"]}, {name: "機械仕掛けの心臓", colors: ["#7A7A7A", "#B8B8B8", "#FF2400", "#36454F"]}, {name: "アストロノミー", colors: ["#000080", "#F5D76E", "#F4D03F", "#36454F"]},
+        {name: "水没した図書室", colors: ["#008080", "#2E8B57", "#8B4513", "#F0FFFF"]}, {name: "聖なる祈り", colors: ["#FFFFFF", "#F7E7CE", "#4682B4", "#B22222"]}, {name: "影の戯れ", colors: ["#000000", "#808080", "#D3D3D3", "#CCFF00"]}, {name: "森の妖精の家", colors: ["#556B2F", "#8B4513", "#FFDAB9", "#FFFF99"]}, {name: "ドールハウス", colors: ["#FF007F", "#B0E0E6", "#FFF5EE", "#28282B"]}, {name: "電磁波のノイズ", colors: ["#FF0000", "#00FF00", "#0000FF", "#1A1A1A"]}, {name: "黄泉の国", colors: ["#CB1B45", "#E9E4D4", "#2B2B2B", "#0F2540"]}, {name: "夜明け前", colors: ["#120A8F", "#DDA0DD", "#FFFACD", "#BC8F8F"]}, {name: "スチーム・パイレーツ", colors: ["#2A3439", "#8B4513", "#FFD700", "#00008B"]}, {name: "オーロラの夜", colors: ["#00FF7F", "#FF00FF", "#4B0082", "#FFFFFF"]},
+        {name: "砂糖菓子の城", colors: ["#AFEEEE", "#FFB7C5", "#F3E5AB", "#FFC87C"]}, {name: "錆びた未来", colors: ["#CC5500", "#708090", "#E5E4E2", "#6B8E23"]}, {name: "幻影の街", colors: ["#F8F8FF", "#D83DFF", "#00FFFF", "#FFBF00"]}, {name: "海底宮殿", colors: ["#F88379", "#00BFFF", "#50C878", "#F5FFFA"]}, {name: "魔導具の輝き", colors: ["#50C878", "#0F52BA", "#E0115F", "#FFC87C"]}, {name: "落日とシルエット", colors: ["#CC5500", "#4B0082", "#111111", "#FFD700"]}, {name: "レトロポップ・フューチャー", colors: ["#FFDB58", "#FF91A4", "#40E0D0", "#36454F"]}, {name: "虚無の空間", colors: ["#000000", "#404040", "#A0A0A0", "#FFFFFF"]}, {name: "魔法の飴玉", colors: ["#FFB7C5", "#AEC6CF", "#FDFD96", "#F8F8FF"]}, {name: "時間の果て", colors: ["#EDC9AF", "#B87333", "#C0C0C0", "#000080"]}
+    ]
+};
+
+// --- 魔導書風の名称変更（表示のみ変更） ---
+const layouts = {
+    person: [
+        { id: "atmosphere", name: "魔導環境・世界の理", type: "text" },
+        { id: "gender", name: "性別", type: "text" },
+        { id: "personality", name: "魂の指向性", type: "text" },
+        { id: "bangs", name: "前髪のしつらえ", type: "text" },
+        { id: "hair", name: "頭部装飾・結髪", type: "text" },
+        { id: "eyes", name: "瞳・魔眼", type: "text" },
+        { id: "expression", name: "表出する感情", type: "text" },
+        { id: "pose", name: "佇まい・術式展開", type: "text" },
+        { id: "palette", name: "魔力光の配色", type: "color" }
+    ],
+    motif: [
+        { id: "atmosphere", name: "魔導環境・世界の理", type: "text" },
+        { id: "motif", name: "携える魔導具・遺物", type: "text" },
+        { id: "material", name: "物質の構成（錬金素材）", type: "text" },
+        { id: "condition", name: "経年劣化・魔力浸食", type: "text" },
+        { id: "scale", name: "現界スケール", type: "text" },
+        { id: "palette", name: "魔力光の配色", type: "color" }
+    ]
+};
+
+// ランダム抽出関数
+function getRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// 単体再抽選用関数
+function rerollItem(id, type) {
+    let result = "";
+    
+    if (id === "bangs" || id === "hair") {
+        const genderEl = document.getElementById("val_gender");
+        const currentGender = genderEl ? genderEl.innerText : "中性";
+        
+        if (id === "bangs") {
+            if (currentGender === "男性") result = getRandom(data.bangsMale);
+            else if (currentGender === "女性") result = getRandom(data.bangsFemale);
+            else result = getRandom([...data.bangsMale, ...data.bangsFemale]);
+        } else {
+            if (currentGender === "男性") result = getRandom(data.hairMale);
+            else if (currentGender === "女性") result = getRandom(data.hairFemale);
+            else result = getRandom([...data.hairMale, ...data.hairFemale]);
+        }
+    } else {
+        result = getRandom(data[id]);
+    }
+
+    if (type === "text") {
+        document.getElementById(`val_${id}`).innerText = result;
+    } else if (type === "color") {
+        document.getElementById(`val_${id}`).innerText = result.name;
+        const boxContainer = document.getElementById(`colors_${id}`);
+        boxContainer.innerHTML = "";
+        result.colors.forEach(c => {
+            const box = document.createElement("div");
+            box.className = "color-box";
+            box.style.backgroundColor = c;
+            boxContainer.appendChild(box);
+        });
+    }
+}
+
+// メインのガチャ実行関数
+function generate() {
+    const category = document.querySelector('input[name="category"]:checked').value;
+    const layout = layouts[category];
+    const container = document.getElementById('resultContainer');
+    
+    if (container.querySelector('.empty-state') || container.dataset.currentCategory !== category) {
+        container.innerHTML = "";
+        container.dataset.currentCategory = category;
+        
+        layout.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `
+                <div class="item-header">
+                    <label class="item-label">
+                        <input type="checkbox" id="lock_${item.id}"> 固定 ${item.name}
+                    </label>
+                    <button class="btn-reroll" onclick="rerollItem('${item.id}', '${item.type}')">再錬成</button>
+                </div>
+                <div class="item-value" id="val_${item.id}"></div>
+                ${item.type === 'color' ? `<div class="color-palette-container" id="colors_${item.id}"></div>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    if (category === "person" && !document.getElementById('lock_gender').checked) {
+        rerollItem("gender", "text");
+    }
+
+    layout.forEach(item => {
+        if (category === "person" && item.id === "gender") return; 
+        
+        const lockCheckbox = document.getElementById(`lock_${item.id}`);
+        if (!lockCheckbox.checked) {
+            rerollItem(item.id, item.type);
+        }
+    });
+}
+
+// 結果コピー関数
+function copyResult() {
+    const category = document.querySelector('input[name="category"]:checked').value;
+    const layout = layouts[category];
+    const artSupply = document.getElementById('artSupply').value;
+    const container = document.getElementById('resultContainer');
+    
+    if (container.querySelector('.empty-state')) {
+        alert("未稼働です。まずは術式を展開（ガチャを回す）してください！");
+        return;
+    }
+
+    let copyText = `🔮 魔導機関の設計図\n【触媒】${artSupply}\n\n`;
+    
+    layout.forEach(item => {
+        const val = document.getElementById(`val_${item.id}`).innerText;
+        copyText += `【${item.name}】${val}\n`;
+    });
+
+    copyText += `\n#キャラデザ錬成盤 #お題ガチャ`;
+
+    navigator.clipboard.writeText(copyText).then(() => {
+        alert("抽出結果をクリップボードに記録しました。SNS等へ出力可能です。");
+    }).catch(err => {
+        alert("記録に失敗しました。手動でコピーをお願いします。");
+    });
+}
+
+// カテゴリ変更時に表示をリセットする
+document.querySelectorAll('input[name="category"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        document.getElementById('resultContainer').innerHTML = '<div class="empty-state">未稼働：術式を展開してください</div>';
+        document.getElementById('resultContainer').dataset.currentCategory = "";
+    });
+});
+</script>
+
+</body>
+</html>
